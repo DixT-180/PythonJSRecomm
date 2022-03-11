@@ -10,10 +10,10 @@ import pymongo
 df = pd.read_csv("perfected.csv")
 df.drop(columns=['Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
 df["combined_name_desc"] = df["Description"] + df["Name"]
-sel = df.head(15000)
+sel = df.head(15000) #no of books data
 print(sel)
 tfv = TfidfVectorizer(min_df=2, max_features=1800, strip_accents='unicode',
-                      analyzer='word', token_pattern=r'\w{1,}', stop_words='english')
+                      analyzer='word', token_pattern=r'\w{1,}', stop_words='english') #ngram not used
 # tf*idf matrix the words are converted to vector word
 tfv_matrix = tfv.fit_transform(sel["combined_name_desc"])
 cosine_sim = cosine_similarity(tfv_matrix, tfv_matrix)
@@ -42,14 +42,15 @@ def get_recommendations(Name, cosine_sim, indices):
     # return sel['Name'].iloc[book_indices], sel['Genres'].iloc[book_indices], sim_scores
 
 
-# book_name = sys.argv[1]
-get_recommendations("Floodland", cosine_sim, indices)
-# print(name_dict['Name'])
-# json_object = json.dumps(name_dict, indent=4)
-# print(json_object)
+book_name = sys.argv[1]
+get_recommendations(book_name, cosine_sim, indices)
+# get_recommendations("Floodland", cosine_sim, indices)
+print(name_dict['Name'])
+json_object = json.dumps(name_dict, indent=4)
+print(json_object)
 
 
-# client = MongoClient('localhost', 27017)
-# db = client['test']
-# work = db['work_dbs']
-# x = work.insert_one(name_dict)
+client = MongoClient('localhost', 27017)
+db = client['test']
+work = db['work_dbs']
+x = work.insert_one(name_dict)
